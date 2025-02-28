@@ -13,8 +13,7 @@ jobs:
       - name: Install git-secrets
         run: |
           sudo apt-get update && sudo apt-get install -y git-secrets
-          git secrets --register-aws
-          git secrets
+          
       - name: Install GitHub CLI
         run: |
           sudo apt update
@@ -40,7 +39,8 @@ jobs:
       - name: Run Scan
         run: |
           cd org-repos
-          pwd
+          git secrets --register-aws
+          git secrets -–scan -r
           
           
       
