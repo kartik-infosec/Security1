@@ -36,6 +36,11 @@ jobs:
           gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
             gh repo clone "$repo"
           done
+
+      - name: Run Scan
+        run: |
+          pwd
+          
           
       
 
