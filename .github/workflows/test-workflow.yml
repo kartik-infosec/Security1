@@ -49,8 +49,8 @@ jobs:
             git secrets --add 'key'
             
             # Scan the repo
-            git secrets --scan -r || echo "Potential secrets found in $(basename "$repo")!"
-            
+            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+            echo "Potential secrets found"
             cd ..
           done
           
