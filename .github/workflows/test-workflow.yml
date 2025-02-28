@@ -1,7 +1,10 @@
 name: Test Workflow
 
-on: [push, pull_request]  # Runs on push or PR events
-
+on: 
+  push:
+    branches:
+     - main
+  workflow_dispatch: #
 jobs:
   test:
     runs-on: ubuntu-latest  # You can change to macos-latest or windows-latest
