@@ -35,7 +35,7 @@ jobs:
 
       - name: Run git secrets scan on all repositories
         run: |
-          cd repos
+          cd org-repos
           for repo in */; do
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
