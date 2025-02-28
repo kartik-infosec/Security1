@@ -43,10 +43,10 @@ jobs:
             # Set up git secrets in the repo
              sudo apt-get update && sudo apt-get install -y git-secrets
             git secrets --register-aws
-            git secrets --add 'password'
-            git secrets -add 'secret'
+            git secrets --add 'password' 
+            git secrets --add 'secret'
             git secrets --add 'token'
-            git secrets -add 'key'
+            git secrets --add 'key'
             
             # Scan the repo
             git secrets --scan -r || echo "Potential secrets found in $(basename "$repo")!"
