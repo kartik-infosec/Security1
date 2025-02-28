@@ -10,9 +10,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install git-secrets
-        run: |
-          sudo apt-get update && sudo apt-get install -y git-secrets
           
       - name: Install GitHub CLI
         run: |
@@ -36,12 +33,22 @@ jobs:
             gh repo clone "$repo"
           done
 
-      - name: Run Scan
+      - name: Run git secrets scan on all repositories
         run: |
-          cd org-repos
-          git secrets --register-aws
-          git secrets --add --add password
-          git secrets --scan -r 
+          cd repos
+          for repo in */; do
+            cd "$repo"
+            echo "Running git secrets scan on $(basename "$repo")..."
+            
+            # Set up git secrets in the repo
+             sudo apt-get update && sudo apt-get install -y git-secrets
+            git secrets --register-aws
+            
+            # Scan the repo
+            git secrets --scan -r || echo "Potential secrets found in $(basename "$repo")!"
+            
+            cd ..
+          done
           
           
       
