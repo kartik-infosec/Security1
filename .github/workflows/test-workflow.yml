@@ -40,7 +40,7 @@ jobs:
         run: |
           cd org-repos
           git secrets --register-aws
-          git secrets -–scan -r
+          git secrets --scan -r
           
           
       
