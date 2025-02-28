@@ -39,6 +39,7 @@ jobs:
 
       - name: Run Scan
         run: |
+          cd org-repos
           pwd
           
           
