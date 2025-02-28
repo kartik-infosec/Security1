@@ -1,28 +1,40 @@
-name: Test Workflow
+name: Clone All Org Repos
 
-on: 
-  push:
-    branches:
-     - main
+on:
   workflow_dispatch: #
+
 jobs:
-  test:
-    runs-on: ubuntu-latest  # You can change to macos-latest or windows-latest
-    
+  clone-repos:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run a test command
-        run: echo "Hello, GitHub Actions!"
-
-      - name: List files in repo
-        run: ls -la
-
-      - name: Print current working directory
-        run: pwd
-
-      - name: Run a multi-line script
+      - name: Install GitHub CLI
         run: |
-          echo "This is a multi-line script"
-          echo "Running another command"
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Authenticate with GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: gh auth login --with-token <<< "$GH_TOKEN"
+
+      - name: Fetch and Clone All Repositories
+        env:
+          ORG_NAME: Organizationgitrsecrets1
+        run: |
+          mkdir -p org-repos
+          cd org-repos
+          
+          # List all repositories and clone them
+          gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
+            gh repo clone "$repo"
+          done
+
+      - name: Upload Repositories as Artifact (Optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloned-repos
+          path: org-repos/
