@@ -10,7 +10,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      - name: Install Git Secrets tool
+        run: |
+          git clone https://github.com/awslabs/git-secrets.git
+          cd git-secrets
+          make install
+          git secrets 
       - name: Install GitHub CLI
         run: |
           sudo apt update
@@ -32,9 +37,6 @@ jobs:
           gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
             gh repo clone "$repo"
           done
+          
+      
 
-      - name: Upload Repositories as Artifact (Optional)
-        uses: actions/upload-artifact@v4
-        with:
-          name: cloned-repos
-          path: org-repos/
