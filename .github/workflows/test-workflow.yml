@@ -1,1 +1,25 @@
+name: Test Workflow
 
+on: [push, pull_request]  # Runs on push or PR events
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # You can change to macos-latest or windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run a test command
+        run: echo "Hello, GitHub Actions!"
+
+      - name: List files in repo
+        run: ls -la
+
+      - name: Print current working directory
+        run: pwd
+
+      - name: Run a multi-line script
+        run: |
+          echo "This is a multi-line script"
+          echo "Running another command"
