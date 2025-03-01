@@ -65,7 +65,7 @@ jobs:
             git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
 
             # Send a Slack notification if secrets are found (you may want to improve this logic)
-            curl -X POST -H 'Content-type: application/json' --data '{"text":"Potential secrets found in repository: '$(basename "$repo")'"}' https://hooks.slack.com/services/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
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
             
             echo "Potential secrets found"
             cd ..
