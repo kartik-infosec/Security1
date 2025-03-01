@@ -38,13 +38,14 @@ jobs:
           for repo in */; do
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
-            
+            cp gitsecretpatternfile . #copy thr gitsecretspatternfile in the same repo folder
             # Set up git secrets in the repo
              sudo apt-get update && sudo apt-get install -y git-secrets
-             if [ -f ../../gitsecretpatternfile ]; then
+             
+             if [ -f gitsecretpatternfile ]; then
               while IFS= read -r gitsecretpatternfile; do
                 git secrets --add "$gitsecretpatternfile"
-              done < ../../gitsecretpatternfile
+              done < gitsecretpatternfile
             else
               echo "patterns file not found!"
             fi
