@@ -72,4 +72,4 @@ jobs:
         run: |
           
 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
