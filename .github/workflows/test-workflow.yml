@@ -41,10 +41,10 @@ jobs:
             
             # Set up git secrets in the repo
              sudo apt-get update && sudo apt-get install -y git-secrets
-             if [ -f ../../patterns ]; then
-              while IFS= read -r pattern; do
-                git secrets --add "$pattern"
-              done < ../../patterns
+             if [ -f ../../gitsecretpatternfile ]; then
+              while IFS= read -r gitsecretpatternfile; do
+                git secrets --add "$gitsecretpatternfile"
+              done < ../../gitsecretpatternfile
             else
               echo "patterns file not found!"
             fi
