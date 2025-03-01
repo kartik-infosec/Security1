@@ -60,7 +60,8 @@ jobs:
             fi
             
             # Scan the repo
-            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+            secrets[] = git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+            curl -X POST -H 'Content-type: application/json' --data '{secrets[]}' https://hooks.slack.com/services/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
             echo "Potential secrets found"
             cd ..
           done
