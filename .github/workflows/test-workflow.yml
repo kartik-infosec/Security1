@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-          
+        
       - name: Install GitHub CLI
         run: |
           sudo apt update
@@ -20,6 +20,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: gh auth login --with-token <<< "$GH_TOKEN"
+        
       - name: Fetch and Clone All Repositories
         env:
           ORG_NAME: Organizationgitrsecrets1
@@ -32,20 +33,28 @@ jobs:
             gh repo clone "$repo"
           done
 
+      - name: Download gitsecretpatternfile from the repository
+        run: |
+          # Checkout the file from the workflow path
+          cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
+
       - name: Run git secrets scan on all repositories
         run: |
           cd org-repos
           for repo in */; do
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
-            cp gitsecretpatternfile . #copy thr gitsecretspatternfile in the same repo folder
+            
+            # Copy the gitsecretpatternfile.txt to the current repo folder
+            cp ../../.github/workflows/gitsecretpatternfile.txt . # Copy pattern file from the workflow directory to the repo
+            
             # Set up git secrets in the repo
-             sudo apt-get update && sudo apt-get install -y git-secrets
+            sudo apt-get update && sudo apt-get install -y git-secrets
              
-             if [ -f gitsecretpatternfile ]; then
-              while IFS= read -r gitsecretpatternfile; do
-                git secrets --add "$gitsecretpatternfile"
-              done < gitsecretpatternfile
+            if [ -f gitsecretpatternfile.txt ]; then
+              while IFS= read -r pattern; do
+                git secrets --add "$pattern"
+              done < gitsecretpatternfile.txt
             else
               echo "patterns file not found!"
             fi
@@ -55,7 +64,3 @@ jobs:
             echo "Potential secrets found"
             cd ..
           done
-          
-          
-      
-
