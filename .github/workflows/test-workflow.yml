@@ -16,10 +16,10 @@ jobs:
           sudo apt update
           sudo apt install -y gh
 
-      - name: Authenticate with GitHub CLI
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: gh auth login --with-token <<< "$GH_TOKEN"
+
+
+
+      
 
       - name: Fetch and Clone All Repositories
         env:
