@@ -1,7 +1,7 @@
 name: Clone All Org Repos
 
 on:
-  workflow_dispatch: #
+  workflow_dispatch: # Manually trigger workflow
 
 jobs:
   clone-repos:
@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Install GitHub CLI
         run: |
           sudo apt update
@@ -18,12 +18,12 @@ jobs:
 
       - name: Authenticate with GitHub CLI
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # Ensure GH_PAT is set in secrets
         run: gh auth login --with-token <<< "$GH_TOKEN"
-        
+
       - name: Fetch and Clone All Repositories
         env:
-          ORG_NAME: Organizationgitrsecrets1
+          ORG_NAME: Organizationgitrsecrets1  # Set your GitHub org name
         run: |
           mkdir -p org-repos
           cd org-repos
@@ -46,10 +46,12 @@ jobs:
             echo "Running git secrets scan on $(basename "$repo")..."
             
             # Copy the gitsecretpatternfile.txt to the current repo folder
-            cp ../../.github/workflows/gitsecretpatternfile.txt . # Copy pattern file from the workflow directory to the repo
+            cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
             
-            # Set up git secrets in the repo
-            sudo apt-get update && sudo apt-get install -y git-secrets
+            # Set up git secrets in the repo (only if it's not installed already)
+            if ! command -v git-secrets &> /dev/null; then
+              sudo apt-get update && sudo apt-get install -y git-secrets
+            fi
              
             if [ -f gitsecretpatternfile.txt ]; then
               while IFS= read -r pattern; do
@@ -59,9 +61,12 @@ jobs:
               echo "patterns file not found!"
             fi
             
-            # Scan the repo
-            secrets[] = git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
-            curl -X POST -H 'Content-type: application/json' --data '{secrets[]}' https://hooks.slack.com/services/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
+            # Scan the repo for secrets
+            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+
+            # Send a Slack notification if secrets are found (you may want to improve this logic)
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"Potential secrets found in repository: '$(basename "$repo")'"}' https://hooks.slack.com/services/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
+            
             echo "Potential secrets found"
             cd ..
           done
