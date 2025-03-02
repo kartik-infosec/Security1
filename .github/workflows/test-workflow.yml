@@ -70,6 +70,6 @@ jobs:
           done
       - name: Install GitHub CLI
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/{{secrets.SLACK_SECRET}}
 
           
