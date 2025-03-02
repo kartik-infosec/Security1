@@ -70,6 +70,6 @@ jobs:
           done
       - name: Install GitHub CLI
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' ${{secrets.SLACK_SECRET}}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' ${{ secrets.SLACK_SECRET }}
 
           
