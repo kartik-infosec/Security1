@@ -11,6 +11,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Send message to Slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"Hello, World!"}' \
+          https://hooks.slack.com/services/${{ secrets.SLACK_WEBHOOK_SECRET }}
+  
+
       - name: Install GitHub CLI
         run: |
           sudo apt update
@@ -68,12 +75,7 @@ jobs:
           
               
           done
-          - name: Send message to Slack
-            run: |
-              curl -X POST -H 'Content-type: application/json' \
-              --data '{"text":"Hello, World!"}' \
-              https://hooks.slack.com/services/${{ secrets.SLACK_WEBHOOK_SECRET }}
-
+          
           
 
           
