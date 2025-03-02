@@ -68,8 +68,9 @@ jobs:
           
               
           done
-      - name: Install GitHub CLI
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' ${{ secrets.SLACK_SECRET }}
-
+          - name: Send notification to Slack
+          env:
+            SLACK_SECRET: ${{ secrets.SLACK_SECRET }}  # Set the secret as an environment variable
+          run: |
+          $SLACK_SECRET
           
