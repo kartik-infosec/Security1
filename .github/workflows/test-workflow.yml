@@ -1,4 +1,4 @@
-name: Clone All Org Repos
+ename: Clone All Org Repos
 
 on:
   workflow_dispatch: # Manually trigger workflow
@@ -70,6 +70,6 @@ jobs:
           done
       - name: Install GitHub CLI
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/SLACK_SECRET
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/secrets.SLACK_SECRET
 
           
