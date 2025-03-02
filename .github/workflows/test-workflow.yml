@@ -68,11 +68,11 @@ jobs:
           
               
           done
-          - name: Send notification to Slack
-          env:
-            SLACK_SECRET: ${{ secrets.SLACK_SECRETT }}  # Set the secret as an environment variable
-          run: |
-          $SLACK_SECRET
+          - name: Send message to Slack
+            run: |
+              curl -X POST -H 'Content-type: application/json' \
+              --data '{"text":"Hello, World!"}' \
+              https://hooks.slack.com/services/${{ secrets.SLACK_WEBHOOK_SECRET }}
 
           
 
