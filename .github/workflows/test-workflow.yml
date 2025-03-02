@@ -70,7 +70,10 @@ jobs:
           done
           - name: Send notification to Slack
           env:
-            SLACK_SECRET: ${{ secrets.SLACK_SECRET }}  # Set the secret as an environment variable
+            SLACK_SECRET: ${{ secrets.SLACK_SECRETT }}  # Set the secret as an environment variable
           run: |
           $SLACK_SECRET
+
+          
+
           
