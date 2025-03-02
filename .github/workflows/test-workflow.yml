@@ -65,16 +65,23 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+            output = $(git secrets --scan --recursive)
             echo "Potential secrets found"
-            curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"Hello, World!"}' \
-            ${{ secrets.SLACK_WEBHOOK_SECRET }} 
-            cd ..
-        
-          
-              
-          done
+            echo "Secrets scan output: $output"
+            - name: Send secrets to Slack
+             run: |
+               while IFS= read -r line
+               do
+                 if [ -n "$line" ]; then  # If the line is not empty
+                   curl -X POST -H 'Content-type: application/json' \
+                   --data "{\"text\":\"Potential secret found: $line\"}" \
+                   ${{ secrets.SLACK_WEBHOOK_SECRET }}
+                 fi
+               done < result.txt
+
+
+            
+            
       
           
 
