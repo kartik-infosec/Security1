@@ -1,4 +1,4 @@
-ename: Clone All Org Repos
+name: Clone All Org Repos
 
 on:
   workflow_dispatch: # Manually trigger workflow
