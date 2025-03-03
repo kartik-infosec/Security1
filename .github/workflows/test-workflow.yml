@@ -68,19 +68,10 @@ jobs:
             git secrets --scan --recursive > secrets_scan_output.txt
             echo "Potential secrets found"
             
-            if [[ -s secrets_scan_output.txt ]]; then
-              while IFS= read -r line; do
-                curl -X POST -H 'Content-type: application/json' \
-                  --data "{\"text\":\"$line\"}" \
-                  "$SLACK_WEBHOOK_SECRET"  # Use the environment variable directly
-              done < secrets_scan_output.txt
-            else
-              echo "No secrets found"
-            fi  
+            curl -X POST -H 'Content-type: application/json' \
+              --data 'secrets_scan_output.txt' \
+              ${{ secrets.SLACK_WEBHOOK_SECRET }
             cd ..
           
               
           done
-
-      
-          
