@@ -70,7 +70,7 @@ jobs:
             
             while IFS= read -r line; do
             curl -X POST -H 'Content-type: application/json' \
-              --data '{"text":"$line"}' \
+              --data '{\"text\":\"$line\"}' \
               ${{ secrets.SLACK_WEBHOOK_SECRET }}
             done < secrets_scan_output.txt  # Read from the file
             cd ..
