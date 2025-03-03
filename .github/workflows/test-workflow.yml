@@ -68,10 +68,13 @@ jobs:
             # Scan the repo for secrets
             git secrets --scan --recursive > secrets.txt
             echo "Potential secrets found"
-            
-            curl -X POST -H 'Content-type: application/json' \
-              --data "{\"text\":\"$(cat secrets.txt)\"}" \
-              ${{ secrets.SLACK_WEBHOOK_SECRET }} 
+
+            - name: Upload secrets.txt as an artifact
+              uses: actions/upload-artifact@v3
+              with:
+                name: secrets-report  # The name of the artifact
+                path: secrets.txt  # Path to the file to upload
+           
             cd ..
           
               
