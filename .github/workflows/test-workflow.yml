@@ -65,7 +65,7 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+            git secrets --scan --recursive > secrets_scan_output.txt
             echo "Potential secrets found"
             
             curl -X POST -H 'Content-type: application/json' \
