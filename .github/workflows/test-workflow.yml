@@ -1,3 +1,4 @@
+
 name: Clone All Org Repos
 
 on:
@@ -65,13 +66,15 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive > secrets_scan_output.txt
+            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
             echo "Potential secrets found"
             
             curl -X POST -H 'Content-type: application/json' \
-              --data 'secrets_scan_output.txt' \
-              ${{ secrets.SLACK_WEBHOOK_SECRET }
+              --data '{"text":"Hello, World!"}' \
+              ${{ secrets.SLACK_WEBHOOK_SECRET }} 
             cd ..
           
               
           done
+      
+          
