@@ -66,11 +66,11 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
+            git secrets --scan --recursive > secrets.txt
             echo "Potential secrets found"
             
             curl -X POST -H 'Content-type: application/json' \
-              --data '{"text":"Hello, World!"}' \
+              --data "{\"text\":\"$(cat secrets.txt)\"}" \
               ${{ secrets.SLACK_WEBHOOK_SECRET }} 
             cd ..
           
