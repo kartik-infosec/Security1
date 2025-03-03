@@ -69,8 +69,8 @@ jobs:
             echo "Potential secrets found"
             
             curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"Hello, World!"}' \
-            ${{ secrets.SLACK_WEBHOOK_SECRET }} 
+              --data '{"text":"Hello, World!"}' \
+              ${{ secrets.SLACK_WEBHOOK_SECRET }} 
             cd ..
           
               
