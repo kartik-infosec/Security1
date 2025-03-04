@@ -61,15 +61,20 @@ jobs:
               echo "patterns file not found!"
             fi
             
-            # Scan the repo for secrets
-            git secrets --scan --recursive > result.log || true
-            SCAN_RESULT="$SCAN_RESULT\n$(cat result.log)"
-            echo "Potential secrets found"
-            cd ..    
-          done
-          echo "$SCAN_RESULT" > scan_output.txt
-      - name: Send message to Slack
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
-          ${{ secrets.SLACK_WEBHOOK_SECRET }} 
+      
+
+      - name: Send result to Slack
+        uses: slackapi/slack-github-action@v1.21.0
+        with:
+          payload: |
+            {
+              "text": "Git-secrets scan results for repositories:",
+              "attachments": [
+                {
+                  "text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}",
+                  "color": "#FF0000"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_SECRET }}    
