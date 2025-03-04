@@ -11,11 +11,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      
+  
+
       - name: Install GitHub CLI
         run: |
           sudo apt update
           sudo apt install -y gh
-
       - name: Authenticate with GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}  # Ensure GH_PAT is set in secrets
@@ -32,12 +34,10 @@ jobs:
           gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
             gh repo clone "$repo"
           done
-
       - name: Download gitsecretpatternfile from the repository
         run: |
           # Checkout the file from the workflow path
           cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
-
       - name: Run git secrets scan on all repositories
         run: |
           cd org-repos
@@ -62,13 +62,15 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!" > secrets.txt
+            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!"
             echo "Potential secrets found"
-            uses: actions/upload-artifact@v3
-            with:
-              name: my-artifact
-              path: secrets.txt
-            
-
             cd ..
+          
+              
           done
+      - name: Send message to Slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"Hello, World!"}' \
+          ${{ secrets.SLACK_WEBHOOK_SECRET }} 
+          
