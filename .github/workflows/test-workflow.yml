@@ -64,13 +64,11 @@ jobs:
             # Scan the repo for secrets
             git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!" > SECRETS.csv
             echo "Potential secrets found"
+            curl -F file=@SECRETS.csv -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" https://slack.com/api/files.upload
             cd ..
           
               
           done
       
 
-      - name: New Slack message    
-        run: |
-          touch abc.txt
-          curl -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" https://slack.com/api/files.upload
+      
