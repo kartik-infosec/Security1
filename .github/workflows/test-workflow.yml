@@ -41,6 +41,7 @@ jobs:
       - name: Run git secrets scan on all repositories
         run: |
           cd org-repos
+          SCAN_RESULT=""
           for repo in */; do
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
@@ -71,5 +72,8 @@ jobs:
       - name: Send message to Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text": "Hi"}' \
+          --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
           ${{ secrets.SLACK_WEBHOOK_SECRET }} 
+
+
+          
