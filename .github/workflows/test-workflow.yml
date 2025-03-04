@@ -10,6 +10,107 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+name: Clone All Org Repos
+
+on:
+  workflow_dispatch: # Manually trigger workflow
+
+jobs:
+  clone-repos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Authenticate with GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # Ensure GH_PAT is set in secrets
+        run: echo "$GH_TOKEN" | gh auth login --with-token
+
+      - name: Fetch and Clone All Repositories
+        env:
+          ORG_NAME: Organizationgitrsecrets1  # Set your GitHub org name
+        run: |
+          mkdir -p org-repos
+          cd org-repos
+          
+          # List all repositories and clone them
+          gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
+            gh repo clone "$repo"
+          done
+
+      - name: Download gitsecretpatternfile from the repository
+        run: |
+          # Checkout the file from the workflow path
+          cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
+
+      - name: Run git secrets scan on all repositories
+        id: scan_repos  # Set an ID for this step to reference its outputs
+        run: |
+          cd org-repos
+          SCAN_RESULT=""
+          for repo in */; do
+            cd "$repo"
+            echo "Running git secrets scan on $(basename "$repo")..."
+
+            # Copy the gitsecretpatternfile.txt to the current repo folder
+            cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
+            
+            # Set up git secrets in the repo (only if it's not installed already)
+            if ! command -v git-secrets &> /dev/null; then
+              sudo apt-get update && sudo apt-get install -y git-secrets
+            fi
+             
+            if [ -f gitsecretpatternfile.txt ]; then
+              while IFS= read -r pattern; do
+                git secrets --add "$pattern"
+              done < gitsecretpatternfile.txt
+            else
+              echo "patterns file not found!"
+            fi
+            
+            # Scan the repo for secrets
+            git secrets --scan --recursive > result.log || true
+            SCAN_RESULT="$SCAN_RESULT\n$(cat result.log)"
+            echo "Potential secrets found"
+            cd ..    
+          done
+          
+          # Debugging output before setting the result
+          echo "SCAN_RESULT content: $SCAN_RESULT"
+          
+          # Ensure the result is not empty before setting the output
+          if [ -z "$SCAN_RESULT" ]; then
+            echo "No secrets found, setting default message"
+            SCAN_RESULT="No potential secrets found."
+          fi
+          
+          # Set the result as an output so it can be accessed in the next step
+          echo "::set-output name=SCAN_RESULT::$SCAN_RESULT"
+
+      - name: Send message to Slack
+        run: |
+          # Debugging the result variable
+          echo "Sending the scan results to Slack..."
+
+          # Clean up the SCAN_RESULT content to avoid any issues with special characters
+          ESCAPED_SCAN_RESULT=$(echo "${{ steps.scan_repos.outputs.SCAN_RESULT }}" | jq -Rs .)
+
+          # Check if the escaped result is not empty
+          if [ "$ESCAPED_SCAN_RESULT" == '""' ]; then
+            echo "No scan results to send to Slack."
+          else
+            # Send the scan results to Slack via webhook
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"text": '"$ESCAPED_SCAN_RESULT"'}' \
+            ${{ secrets.SLACK_WEBHOOK_SECRET }}
+          fi
 
       - name: Install GitHub CLI
         run: |
