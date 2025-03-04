@@ -72,4 +72,4 @@ jobs:
 
       - name: New Slack message    
         run: |
-          curl -F file=@SECRETS.csv -F channels=D08FXUH361K -F token=${{ secrets.SLACK_WEBHOOK_SECRET }}  -F initial_comment="Here's the file!" https://slack.com/api/files.upload
+          curl -F file=@SECRETS.csv -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" https://slack.com/api/files.upload
