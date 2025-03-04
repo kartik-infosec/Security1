@@ -64,10 +64,6 @@ jobs:
             # Scan the repo for secrets
             git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!" > SECRETS.txt
             echo "Potential secrets found"
-            uses: actions/upload-artifact@v3
-            with:
-              name: secret-scan-report
-              path: SECRETS.txt
             cd ..
           
               
