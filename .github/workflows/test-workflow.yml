@@ -71,9 +71,11 @@ jobs:
           
               
           done
-          - name: Test
-          run: |
-            touch abc.txt
-            curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
+      - name: Test
+        run: |
+          touch abc.txt
+          curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
+          curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer xoxb-8555421015792-8541969047013-5eZJEqjN9KuEOcNBmQ4NLvRC" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
+          curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer xoxb-8555421015792-8541969047013-5eZJEqjN9KuEOcNBmQ4NLvRC" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.getUploadURLExternal
 
       
