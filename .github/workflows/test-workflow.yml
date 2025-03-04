@@ -72,12 +72,7 @@ jobs:
                 name: secrets-report  # The name of the artifact
                 path: secrets.txt  # Path to the file to upload
             
-            # Send secrets.txt content to Slack
-            - name: Send secrets to Slack
-              run: |
-                curl -X POST -H 'Content-type: application/json' \
-                  --data "{\"text\":\"$(cat secrets.txt)\"}" \
-                  ${{ secrets.SLACK_WEBHOOK_SECRET }}
+           
 
             cd ..
           done
