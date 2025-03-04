@@ -62,20 +62,14 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!" > SECRETS.csv
+            git secrets --scan --recursive > result.log || true
+            SCAN_RESULT="$SCAN_RESULT\n$(cat result.log)"
             echo "Potential secrets found"
-            curl -X POST -F file=@SECRETS.csv -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
-            touch abc.txt
-            curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
-            cd ..
-          
-              
+            cd ..    
           done
-      - name: Test
+          echo "$SCAN_RESULT" > scan_output.txt
+      - name: Send message to Slack
         run: |
-          touch abc.txt
-          curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
-          curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer xoxb-8555421015792-8541969047013-5eZJEqjN9KuEOcNBmQ4NLvRC" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
-          curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer xoxb-8555421015792-8541969047013-5eZJEqjN9KuEOcNBmQ4NLvRC" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.getUploadURLExternal
-
-      
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
+          ${{ secrets.SLACK_WEBHOOK_SECRET }} 
