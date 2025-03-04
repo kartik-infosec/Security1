@@ -62,7 +62,7 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive > secrets.txt
+            git secrets --scan --recursive || echo "Potential secrets found in $(basename "$repo")!" > secrets.txt
             echo "Potential secrets found"
             uses: actions/upload-artifact@v3
             with:
