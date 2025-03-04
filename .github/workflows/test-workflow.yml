@@ -11,13 +11,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      
-  
-
       - name: Install GitHub CLI
         run: |
           sudo apt update
           sudo apt install -y gh
+
       - name: Authenticate with GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}  # Ensure GH_PAT is set in secrets
@@ -34,18 +32,21 @@ jobs:
           gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
             gh repo clone "$repo"
           done
+
       - name: Download gitsecretpatternfile from the repository
         run: |
           # Checkout the file from the workflow path
           cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
+
       - name: Run git secrets scan on all repositories
+        id: scan_repos  # Set an ID for this step to reference its outputs
         run: |
           cd org-repos
           SCAN_RESULT=""
           for repo in */; do
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
-            
+
             # Copy the gitsecretpatternfile.txt to the current repo folder
             cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
             
@@ -69,11 +70,12 @@ jobs:
             cd ..    
           done
           echo "$SCAN_RESULT" > scan_output.txt
+          
+          # Set the result as an output so it can be accessed in the next step
+          echo "::set-output name=SCAN_RESULT::$SCAN_RESULT"  
+
       - name: Send message to Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
           --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
-          ${{ secrets.SLACK_WEBHOOK_SECRET }} 
-
-
-          
+          ${{ secrets.SLACK_WEBHOOK_SECRET }}
