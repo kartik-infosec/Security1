@@ -71,6 +71,9 @@ jobs:
           
               
           done
-      
+          - name: Test
+          run: |
+            touch abc.txt
+            curl -X POST -F file=@abc.txt -F "initial_comment=Shakes the cat" -F channels=D08FXUH361K -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H 'Content-Type: multipart/form-data' https://slack.com/api/files.upload
 
       
