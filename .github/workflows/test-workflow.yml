@@ -69,13 +69,19 @@ jobs:
             echo "Potential secrets found"
             cd ..    
           done
-          echo "$SCAN_RESULT" > scan_output.txt
           
+          # Output the result
+          echo "Scan Result: $SCAN_RESULT"
           # Set the result as an output so it can be accessed in the next step
-          echo "::set-output name=SCAN_RESULT::$SCAN_RESULT"  
+          echo "::set-output name=SCAN_RESULT::$SCAN_RESULT"
 
       - name: Send message to Slack
         run: |
+          # Debugging the result variable
+          echo "Sending the scan results to Slack..."
+          echo "SCAN_RESULT: ${{ steps.scan_repos.outputs.SCAN_RESULT }}"
+
+          # Send the scan results to Slack via webhook
           curl -X POST -H 'Content-type: application/json' \
           --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
           ${{ secrets.SLACK_WEBHOOK_SECRET }}
