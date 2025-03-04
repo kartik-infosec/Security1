@@ -64,6 +64,11 @@ jobs:
             # Scan the repo for secrets
             git secrets --scan --recursive > secrets.txt
             echo "Potential secrets found"
+            uses: actions/upload-artifact@v3
+            with:
+              name: my-artifact
+              path: secrets.txt
+            
 
             cd ..
           done
