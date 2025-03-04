@@ -71,5 +71,5 @@ jobs:
       - name: Send message to Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
+          --data '{"text": "Hi"}' \
           ${{ secrets.SLACK_WEBHOOK_SECRET }} 
