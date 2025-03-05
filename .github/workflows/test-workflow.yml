@@ -67,6 +67,9 @@ jobs:
             echo "Potential secrets found"
             cd ..    
           done
+      - name: CAT
+        run: |
+          cat result
       - name: Send message to Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
