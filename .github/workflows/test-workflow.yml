@@ -65,9 +65,6 @@ jobs:
             # Scan the repo for secrets
             git secrets --scan --recursive > result 2>&1 || true
             curl -X POST -F file=@result -F "initial_comment=Shakes the cat" -F channels=D08FRK2F9HS -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H "Content-Type:multipart/form-data" https://slack.com/api/files.completeUploadExternal
-            curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\": \"$(cat result)\"}" \
-            ${{ secrets.SLACK_WEBHOOK_SECRET }} 
             echo "Potential secrets found"
 
             cd ..    
