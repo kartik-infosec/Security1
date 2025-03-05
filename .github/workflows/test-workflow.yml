@@ -71,8 +71,12 @@ jobs:
       - name: CAT
         run: |
           cd org-repos 
+          cd Synksecrets
           pwd
           ls
+          cat result
+          cd .. 
+          cd WRONGSECRETS
           cat result
       - name: Send message to Slack
         run: |
