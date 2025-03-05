@@ -65,11 +65,10 @@ jobs:
             # Scan the repo for secrets
             git secrets --scan --recursive > result 
             echo "Potential secrets found"
+            cat result
             cd ..    
           done
-      - name: CAT
-        run: |
-          cat result
+      
       - name: Send message to Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
