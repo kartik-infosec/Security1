@@ -70,6 +70,7 @@ jobs:
           done
       - name: CAT
         run: |
+          cd org-repos 
           pwd
           ls
           cat result
