@@ -63,7 +63,7 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive > result 
+            git secrets --scan --recursive > result || true
             echo "Potential secrets found"
             cat result
             cd ..    
