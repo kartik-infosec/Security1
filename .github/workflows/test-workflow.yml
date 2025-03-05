@@ -63,7 +63,7 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive > result || true
+            git secrets --scan --recursive > result.txt || true
             echo "Potential secrets found"
             cat result
             cd ..    
@@ -74,7 +74,7 @@ jobs:
           cd Synksecrets
           pwd
           ls
-          cat result
+          cat result.txt
           cd .. 
           cd WRONGSECRETS
           cat result
