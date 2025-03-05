@@ -63,14 +63,12 @@ jobs:
             fi
             
             # Scan the repo for secrets
-            git secrets --scan --recursive > result.log || true
-            SCAN_RESULT="$SCAN_RESULT\n$(cat result.log)"
+            git secrets --scan --recursive > result 
             echo "Potential secrets found"
             cd ..    
           done
-          echo "$SCAN_RESULT" > scan_output.txt
       - name: Send message to Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text": "${{ steps.scan_repos.outputs.SCAN_RESULT }}"}' \
+          --data '{"text": "hello"}' \
           ${{ secrets.SLACK_WEBHOOK_SECRET }} 
