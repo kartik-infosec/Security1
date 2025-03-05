@@ -70,6 +70,8 @@ jobs:
           done
       - name: CAT
         run: |
+          pwd
+          ls
           cat result
       - name: Send message to Slack
         run: |
