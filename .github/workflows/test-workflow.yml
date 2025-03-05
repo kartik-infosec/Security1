@@ -64,6 +64,9 @@ jobs:
             
             # Scan the repo for secrets
             git secrets --scan --recursive > result 2>&1 || true
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"text": "hello"}' \
+            ${{ secrets.SLACK_WEBHOOK_SECRET }} 
             echo "Potential secrets found"
 
             cd ..    
