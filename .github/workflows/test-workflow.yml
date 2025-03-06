@@ -64,8 +64,30 @@ jobs:
             
             # Scan the repo for secrets
             git secrets --scan --recursive > result 2>&1 || true
-            curl -X POST -F file=@result -F "initial_comment=Shakes the cat" -F channels=D08FRK2F9HS -H "Authorization: Bearer ${{ secrets.SLACK_WEBHOOK_SECRET }}" -H "Content-Type:multipart/form-data" https://slack.com/api/files.completeUploadExternal
-            echo "Potential secrets found"
+            
+            webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
+            escape_json() {
+              echo "$1" | \
+              sed 's/\\/\\\\/g' | \
+              sed 's/"/\\"/g' | \
+              sed 's/\$/\\$/g' | \
+              sed 's/\n/\\n/g' | \
+              sed 's/\r/\\r/g' | \
+              sed 's/\t/\\t/g' | \
+              sed 's/\b/\\b/g' | \
+              sed 's/\f/\\f/g' | \
+              sed 's/\//\\\//g' | \
+              sed 's/[[:cntrl:]]/\\u&/g' | \
+              sed 's/[^[:print:]\t\n\r]/\\u&/g'  # Convert non-printable characters to Unicode escape sequences
+              }
+
+            # Read the file line by line
+              while IFS= read -r line; do
+                escaped_line=$(escape_json "$line")
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$escaped_line"'"}' $webhook_url
+                sleep 2
+              done < "$file"
+
 
             cd ..    
           done
