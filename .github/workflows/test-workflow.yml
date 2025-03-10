@@ -91,14 +91,14 @@ jobs:
                       "type": "section",
                       "text": {
                          "type": "mrkdwn",
-                         "text": "*Repository Info*\n'"$repo"'"
+                         "text": "*Repository Info:* \n\n• Repository: `"'"$repo"'"`"
                      }
                     },
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "*Message:*\n'"$escaped_line"'"
+                        "text": "*Message:* \n\n• `"'"$escaped_line"'"`"
                      }
                     }
                   ]
