@@ -84,28 +84,24 @@ jobs:
               file="result"
               while IFS= read -r line; do
                 escaped_line=$(escape_json "$line")
-                payload='{
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                         "type": "mrkdwn",
-                         "text": "*Repository Info:* \n\n• Repository: `"'"$repo"'"`"
-                     }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Message:* \n\n• `"'"$escaped_line"'"`"
-                     }
-                    }
-                  ]
-                }'
-                curl -X POST -H 'Content-type: application/json' --data "$payload" $webhook_url
-                
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$repo"'"}' $webhook_url
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$escaped_line"'"}' $webhook_url
                 sleep 2
               done < "$file"
             cd ..    
           done
-     
+      - name: CAT
+        run: |
+          cd org-repos 
+          cd Synksecrets
+          pwd
+          ls
+          cat result
+          cd .. 
+          cd WRONGSECRETS
+          cat result
+      - name: Send message to Slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text": "hello"}' \
+          ${{ secrets.SLACK_WEBHOOK_SECRET }} 
