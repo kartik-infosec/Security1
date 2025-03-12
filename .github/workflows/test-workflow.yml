@@ -85,25 +85,8 @@ jobs:
               file="result"
               while IFS= read -r line; do
                 escaped_line=$(escape_json "$line")
-                payload='{
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                         "type": "mrkdwn",
-                         "text": "*Repository Info:* \n\n• Repository: `"'"$repo"'"`"
-                     }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Message:* \n\n• `"'"$escaped_line"'"`"
-                     }
-                    }
-                  ]
-                }'
-                curl -X POST -H 'Content-type: application/json' --data "$payload" $webhook_url
+                
+                curl -X POST -H 'Content-type: application/json' --data "$escaped_line" $webhook_url
                 
                 sleep 2
               done < "$file"
