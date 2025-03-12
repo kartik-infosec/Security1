@@ -1,4 +1,3 @@
-
 name: Clone All Org Repos
 
 on:
@@ -85,9 +84,8 @@ jobs:
               file="result"
               while IFS= read -r line; do
                 escaped_line=$(escape_json "$line")
-                
-                curl -X POST -H 'Content-type: application/json' --data "$escaped_line" $webhook_url
-                
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$repo"'"}' $webhook_url
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$escaped_line"'"}' $webhook_url
                 sleep 2
               done < "$file"
             cd ..    
