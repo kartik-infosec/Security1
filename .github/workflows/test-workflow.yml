@@ -91,4 +91,4 @@ jobs:
                 sleep 2
               done < "$file"
             cd ..    
-          done < $repos_name.txt
+          done < "$repos_name.txt"
