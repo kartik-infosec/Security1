@@ -16,7 +16,7 @@ jobs:
 
       - name: Install GitHub CLI
         run: |
-          sudo apt update
+          
           sudo apt update && sudo apt upgrade gh -y
       - name: Authenticate with GitHub CLI
         env:
