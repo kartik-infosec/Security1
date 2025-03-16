@@ -40,7 +40,10 @@ jobs:
           while IFS= read -r repo; do
             gh repo clone "$repo"
           done < Org_repos_name.txt 
-          
+      - name: Create a patterns file
+        run: |
+          touch gitsecretpatternfile.txt
+          cat ${{ inputs.pattern_name }} > gitsecretpatternfile.txt
       - name: Run git secrets scan on all repositories
         run: |
           cd org-repos
@@ -49,12 +52,21 @@ jobs:
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
             
+            # Copy the gitsecretpatternfile.txt to the current repo folder
+            cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
             
             # Set up git secrets in the repo (only if it's not installed already)
             if ! command -v git-secrets &> /dev/null; then
               sudo apt-get update && sudo apt-get install -y git-secrets
-            fi             
-            git secrets --add "${{ inputs.patterns_name }}"
+            fi
+             
+            if [ -f gitsecretpatternfile.txt ]; then
+              while IFS= read -r pattern; do
+                git secrets --add "$pattern"
+              done < gitsecretpatternfile.txt
+            else
+              echo "patterns file not found!"
+            fi
             
             # Scan the repo for secrets
             git secrets --scan --recursive > result 2>&1 || true
