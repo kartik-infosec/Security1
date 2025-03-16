@@ -81,7 +81,7 @@ jobs:
               sed 's/[[:cntrl:]]/\\u&/g' | \
               sed 's/[^[:print:]\t\n\r]/\\u&/g'  # Convert non-printable characters to Unicode escape sequences
               }
-              curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$repo"'"}' $webhook_url
+              curl -X POST -H 'Content-type: application/json' --data '{"text":"*# '"$repo"'*"}' $webhook_url
             # Read the file line by line'
               file="result"
               while IFS= read -r line; do
