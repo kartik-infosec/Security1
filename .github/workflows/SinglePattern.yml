@@ -1,0 +1,86 @@
+name: Clone All Org Repos
+
+on:
+  workflow_dispatch: # Manually trigger workflow
+    inputs:
+      pattern_name:
+         description: "Enter the Secret to Scan"
+         required: true
+         type: string
+
+jobs:
+  clone-repos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      
+  
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+      - name: Authenticate with GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # Ensure GH_PAT is set in secrets
+        run: echo "$GH_TOKEN" | gh auth login --with-token
+
+      - name: Fetch and Clone All Repositories
+        env:
+          ORG_NAME: Organizationgitrsecrets1  # Set your GitHub org name
+        run: |
+          mkdir -p org-repos
+          cd org-repos
+          
+          # List all repositories and clone them
+          gh repo list $ORG_NAME --limit 1000 | awk '{print $1}' > Org_repos_name.txt
+          while IFS= read -r repo; do
+            gh repo clone "$repo"
+          done < Org_repos_name.txt 
+          
+      - name: Run git secrets scan on all repositories
+        run: |
+          cd org-repos
+          SCAN_RESULT=""
+          for repo in */; do
+            cd "$repo"
+            echo "Running git secrets scan on $(basename "$repo")..."
+            
+            
+            # Set up git secrets in the repo (only if it's not installed already)
+            if ! command -v git-secrets &> /dev/null; then
+              sudo apt-get update && sudo apt-get install -y git-secrets
+            fi             
+            git secrets --add "${{ inputs.patterns_name }}"
+            
+            # Scan the repo for secrets
+            git secrets --scan --recursive > result 2>&1 || true
+            
+            webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
+            escape_json() {
+              echo "$1" | \
+              sed 's/\\/\\\\/g' | \
+              sed 's/"/\\"/g' | \
+              sed 's/\$/\\$/g' | \
+              sed 's/\n/\\n/g' | \
+              sed 's/\r/\\r/g' | \
+              sed 's/\t/\\t/g' | \
+              sed 's/\b/\\b/g' | \
+              sed 's/\f/\\f/g' | \
+              sed 's/\//\\\//g' | \
+              sed 's/[[:cntrl:]]/\\u&/g' | \
+              sed 's/[^[:print:]\t\n\r]/\\u&/g'  # Convert non-printable characters to Unicode escape sequences
+              }
+              curl -X POST -H 'Content-type: application/json' --data '{"text":"*/ '"$repo"'*"}' $webhook_url
+            # Read the file line by line'
+              file="result"
+              while IFS= read -r line; do
+                escaped_line=$(escape_json "$line")
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$escaped_line"'"}' $webhook_url
+                sleep 2
+              done < "$file"
+            cd ..    
+          done
