@@ -31,7 +31,7 @@ jobs:
           cd org-repos
           
           # List all repositories and clone them
-          gh repo list $ORG_NAME --limit 1000 | awk '{print $1}' > Org_repos_name.txt
+          gh repo list Organizationgitrsecrets1 --limit 1000 | grep -v 'archived' | awk '{print $1}' > Org_repos_name.txt 
           while IFS= read -r repo; do
             gh repo clone "$repo"
           done < Org_repos_name.txt 
