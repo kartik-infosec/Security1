@@ -31,10 +31,10 @@ jobs:
           cd org-repos
           
           # List all repositories and clone them
-          gh repo list $ORG_NAME --limit 1000 | awk '{print $1}' > repos_name.txt
+          gh repo list $ORG_NAME --limit 1000 | awk '{print $1}' > Org_repos_name.txt
           while IFS= read -r repo; do
             gh repo clone "$repo"
-          done < repos_name.txt 
+          done < Org_repos_name.txt 
       - name: Download gitsecretpatternfile from the repository
         run: |
           # Checkout the file from the workflow path
@@ -43,7 +43,8 @@ jobs:
         run: |
           cd org-repos
           SCAN_RESULT=""
-          for repo in */; do
+          ls > repos_name.txt
+          while IFS= read -r repo; do
             cd "$repo"
             echo "Running git secrets scan on $(basename "$repo")..."
             
@@ -90,4 +91,4 @@ jobs:
                 sleep 2
               done < "$file"
             cd ..    
-          done
+          done < $repos_name.txt
