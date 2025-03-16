@@ -16,12 +16,12 @@ jobs:
 
       - name: Install GitHub CLI
         run: |
-          
-          sudo apt update && sudo apt upgrade gh -y
+          sudo apt update
+          sudo apt install -y gh
       - name: Authenticate with GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}  # Ensure GH_PAT is set in secrets
-        run: echo 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 | gh auth login --with-token
+        run: echo "$GH_TOKEN" | gh auth login --with-token
 
       - name: Fetch and Clone All Repositories
         env:
