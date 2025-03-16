@@ -31,9 +31,10 @@ jobs:
           cd org-repos
           
           # List all repositories and clone them
-          gh repo list $ORG_NAME --limit 100 --json nameWithOwner --jq '.[].nameWithOwner' | while read repo; do
+          gh repo list $ORG_NAME --limit 1000 | awk '{print $1}' > repos_name.txt
+          while IFS= read -r repo; do
             gh repo clone "$repo"
-          done
+          done < repos_name.txt 
       - name: Download gitsecretpatternfile from the repository
         run: |
           # Checkout the file from the workflow path
