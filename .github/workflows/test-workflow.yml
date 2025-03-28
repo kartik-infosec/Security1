@@ -42,10 +42,10 @@ jobs:
       - name: Run git secrets scan on all repositories
         run: |
           cd org-repos
-          SCAN_RESULT=""
+         
           for repo in */; do
             cd "$repo"
-            echo "Running git secrets scan on $(basename "$repo")..."
+            
             
             # Copy the gitsecretpatternfile.txt to the current repo folder
             cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
