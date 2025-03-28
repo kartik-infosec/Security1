@@ -74,7 +74,7 @@ jobs:
             webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
             cp ../../.github/workflows/escapeinput.sh ./escapeinput.sh
             chmod +x escapeinput.sh
-            escapeinput.sh
+            ./escapeinput.sh
               curl -X POST -H 'Content-type: application/json' --data '{"text":"*/ '"$repo"'*"}' $webhook_url
             # Read the file line by line'
               file="result"
