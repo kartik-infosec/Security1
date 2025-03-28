@@ -40,9 +40,10 @@ jobs:
           # Checkout the file from the workflow path
           cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
       - name: Run git secrets scan on all repositories
-        run: |
+        run: | 
+          sudo apt-get update && sudo apt-get install -y git-secrets   # Install git-secrets tool
           cd org-repos
-         
+          
           for repo in */; do
             cd "$repo"
             
@@ -50,7 +51,7 @@ jobs:
             # Copy the gitsecretpatternfile.txt to the current repo folder
             cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
           
-             
+            
             if [ -f gitsecretpatternfile.txt ]; then
               while IFS= read -r pattern; do
                 git secrets --add "$pattern"
