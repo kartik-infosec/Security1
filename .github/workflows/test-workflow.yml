@@ -39,8 +39,6 @@ jobs:
         run: |
           # Checkout the file from the workflow path
           cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
-          cp .github/workflows/allowedlist.txt ./allowedlist.txt
-          
       - name: Run git secrets scan on all repositories
         run: | 
           sudo apt-get update && sudo apt-get install -y git-secrets   # Install git-secrets tool
@@ -52,7 +50,7 @@ jobs:
             
             # Copy the gitsecretpatternfile.txt to the current repo folder
             cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
-            cp ../../.github/workflows/allowedlist.txt . # Copy allowed list from the workflow directory to the repo
+          
             
             if [ -f gitsecretpatternfile.txt ]; then
               while IFS= read -r pattern; do
@@ -61,20 +59,25 @@ jobs:
             else
               echo "patterns file not found!"
             fi
-            if [ -f allowedlist.txt ]; then
-              while IFS= read -r allowed_pattern; do
-                git secrets --add --allowed "$allowed_pattern"
-              done < allowedlist.txt
-            else
-              echo "allowed_patterns file not found!"
-            fi
+            
             # Scan the repo for secrets
             git secrets --scan --recursive > result 2>&1 || true
             
             webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
-            cp ../../.github/workflows/escapeinput.txt ./escapeinput.txt
-            cat escapeinput.txt
-           
+            escape_json() {
+              echo "$1" | \
+              sed 's/\\/\\\\/g' | \
+              sed 's/"/\\"/g' | \
+              sed 's/\$/\\$/g' | \
+              sed 's/\n/\\n/g' | \
+              sed 's/\r/\\r/g' | \
+              sed 's/\t/\\t/g' | \
+              sed 's/\b/\\b/g' | \
+              sed 's/\f/\\f/g' | \
+              sed 's/\//\\\//g' | \
+              sed 's/[[:cntrl:]]/\\u&/g' | \
+              sed 's/[^[:print:]\t\n\r]/\\u&/g'  # Convert non-printable characters to Unicode escape sequences
+              }
               curl -X POST -H 'Content-type: application/json' --data '{"text":"*/ '"$repo"'*"}' $webhook_url
             # Read the file line by line'
               file="result"
