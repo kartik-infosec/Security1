@@ -49,11 +49,7 @@ jobs:
             
             # Copy the gitsecretpatternfile.txt to the current repo folder
             cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
-            
-            # Set up git secrets in the repo (only if it's not installed already)
-            if ! command -v git-secrets &> /dev/null; then
-              sudo apt-get update && sudo apt-get install -y git-secrets
-            fi
+          
              
             if [ -f gitsecretpatternfile.txt ]; then
               while IFS= read -r pattern; do
