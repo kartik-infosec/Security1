@@ -1,5 +1,3 @@
-#!/bin/bash
-
 escape_json() {
   echo "$1" | \
   sed 's/\\/\\\\/g' | \
@@ -14,3 +12,5 @@ escape_json() {
   sed 's/[[:cntrl:]]/\\u&/g' | \
   sed 's/[^[:print:]\t\n\r]/\\u&/g'  # Convert non-printable characters to Unicode escape sequences
 }
+
+
