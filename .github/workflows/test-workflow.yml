@@ -40,8 +40,7 @@ jobs:
           # Checkout the file from the workflow path
           cp .github/workflows/gitsecretpatternfile.txt ./gitsecretpatternfile.txt
           cp .github/workflows/allowedlist.txt ./allowedlist.txt
-          cp .github/workflows/escapeinput.sh ./escapeinput.sh
-          chmod +x escapeinput.sh
+          
       - name: Run git secrets scan on all repositories
         run: | 
           sudo apt-get update && sudo apt-get install -y git-secrets   # Install git-secrets tool
@@ -73,7 +72,9 @@ jobs:
             git secrets --scan --recursive > result 2>&1 || true
             
             webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
-            . ../../escapeinput.sh
+            cp .github/workflows/escapeinput.sh ./escapeinput.sh
+            chmod +x escapeinput.sh
+            escapeinput.sh
               curl -X POST -H 'Content-type: application/json' --data '{"text":"*/ '"$repo"'*"}' $webhook_url
             # Read the file line by line'
               file="result"
