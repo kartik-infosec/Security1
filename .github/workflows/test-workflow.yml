@@ -72,9 +72,9 @@ jobs:
             git secrets --scan --recursive > result 2>&1 || true
             
             webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
-            cp ../../.github/workflows/escapeinput.sh ./escapeinput.sh
-            chmod +x escapeinput.sh
-            ./escapeinput.sh
+            cp ../../.github/workflows/escapeinput.txt ./escapeinput.txt
+            cat escapeinput.txt
+           
               curl -X POST -H 'Content-type: application/json' --data '{"text":"*/ '"$repo"'*"}' $webhook_url
             # Read the file line by line'
               file="result"
