@@ -48,8 +48,7 @@ jobs:
             cd "$repo"
             
             
-            # Copy the gitsecretpatternfile.txt to the current repo folder
-            cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
+    
           
             
             if [ -f gitsecretpatternfile.txt ]; then
