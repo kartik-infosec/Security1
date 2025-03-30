@@ -35,9 +35,7 @@ jobs:
           while IFS= read -r repo; do
             gh repo clone "$repo"
           done < Org_repos_name.txt 
-      - name: Download gitsecretpatternfile from the repository
-        run: |
-          # Checkout the file from the workflow path
+     
           
       - name: Run git secrets scan on all repositories
         run: | 
