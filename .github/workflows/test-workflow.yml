@@ -49,13 +49,21 @@ jobs:
             
             # Copy the gitsecretpatternfile.txt to the current repo folder
             cp ../../.github/workflows/gitsecretpatternfile.txt .  # Copy pattern file from the workflow directory to the repo
-    
+            cp ../../.github/workflows/allowedlist.txt .   # Copy allowedlist file from the workflow directory to the repo
           
             
             if [ -f gitsecretpatternfile.txt ]; then
               while IFS= read -r pattern; do
                 git secrets --add "$pattern"
               done < gitsecretpatternfile.txt
+            else
+              echo "patterns file not found!"
+            fi
+
+            if [ -f allowedlist.txt ]; then
+              while IFS= read -r allowedlist; do
+                git secrets --add --allowed "$allowedlist"
+              done < allowedlist.txt
             else
               echo "patterns file not found!"
             fi
