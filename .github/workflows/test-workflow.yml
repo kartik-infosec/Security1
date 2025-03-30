@@ -64,26 +64,14 @@ jobs:
             git secrets --scan --recursive > result 2>&1 || true
             
             webhook_url=${{ secrets.SLACK_WEBHOOK_SECRET }}
-            escape_json() {
-              echo "$1" | \
-              sed 's/\\/\\\\/g' | \
-              sed 's/"/\\"/g' | \
-              sed 's/\$/\\$/g' | \
-              sed 's/\n/\\n/g' | \
-              sed 's/\r/\\r/g' | \
-              sed 's/\t/\\t/g' | \
-              sed 's/\b/\\b/g' | \
-              sed 's/\f/\\f/g' | \
-              sed 's/\//\\\//g' | \
-              sed 's/[[:cntrl:]]/\\u&/g' | \
-              sed 's/[^[:print:]\t\n\r]/\\u&/g'  # Convert non-printable characters to Unicode escape sequences
-              }
+            
+
+            cat result | jq -sRr @uri > encoded_result
               curl -X POST -H 'Content-type: application/json' --data '{"text":"*/ '"$repo"'*"}' $webhook_url
             # Read the file line by line'
-              file="result"
+              file="encoded_result"
               while IFS= read -r line; do
-                escaped_line=$(escape_json "$line")
-                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$escaped_line"'"}' $webhook_url
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"$line"}' $webhook_url
                 sleep 2
               done < "$file"
             cd ..    
